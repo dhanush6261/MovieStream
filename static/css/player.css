@@ -1,0 +1,194 @@
+/*
+ * player.css
+ * Custom HTML5 player controls (player.js) plus the movie detail
+ * page layout that surrounds it.
+ */
+
+.movie-detail {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--space-lg);
+}
+
+.player {
+    position: relative;
+    background: #000;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    max-height: 80vh;
+}
+
+.player video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    background: #000;
+    cursor: pointer;
+}
+
+.player-missing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+}
+
+.player-controls {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.85),
+        transparent
+    );
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+        opacity var(--transition-base),
+        visibility var(--transition-base);
+}
+
+/* Auto-hidden state */
+.player.is-controls-hidden .player-controls {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.player-seek {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+    margin-bottom: var(--space-sm);
+}
+
+.player-controls-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.player-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background var(--transition-fast);
+}
+
+.player-btn:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.player-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.player-btn.is-muted {
+    color: var(--danger);
+}
+
+.player-volume {
+    width: 80px;
+    accent-color: var(--accent);
+}
+
+.player-time {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.player-spacer {
+    flex: 1;
+}
+
+.player-speed {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    font-size: 0.8rem;
+}
+
+.player-up-next {
+    position: absolute;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    max-width: 260px;
+    box-shadow: var(--shadow-card);
+}
+
+.player-up-next p {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.9rem;
+}
+
+.player-up-next-actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+}
+
+/* --- Movie detail info below the player --- */
+
+.movie-detail-info {
+    padding: var(--space-xl) 0;
+}
+
+.movie-detail-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 var(--space-sm);
+}
+
+.movie-detail-meta {
+    display: flex;
+    gap: var(--space-md);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.movie-detail-description {
+    color: var(--text-secondary);
+    max-width: 720px;
+    margin-bottom: var(--space-lg);
+}
+
+@media (max-width: 700px) {
+    .player-volume {
+        display: none;
+    }
+    .player-up-next {
+        left: var(--space-md);
+        right: var(--space-md);
+        max-width: none;
+    }
+}

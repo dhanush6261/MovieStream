@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Log In - MovieStream{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="auth-card">
+        <h1>Welcome back</h1>
+        <p class="auth-card-subtitle">Log in to see your list and continue watching.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="upload-flash upload-flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="upload-field">
+                {{ form.email.label }}
+                {{ form.email(placeholder="you@example.com") }}
+                {% for error in form.email.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field">
+                {{ form.password.label }}
+                {{ form.password(placeholder="Your password") }}
+                {% for error in form.password.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-checkboxes">
+                <label>{{ form.remember_me() }} {{ form.remember_me.label.text }}</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-submit">Log In</button>
+        </form>
+
+        <p class="auth-card-footer">
+            New to MovieStream? <a href="{{ url_for('auth.register') }}">Create an account</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% import "partials/macros.html" as m %}
+
+{% block title %}Search{% if query %} - "{{ query }}"{% endif %} - MovieStream{% endblock %}
+
+{% block content %}
+<section class="search-page">
+    <h1 class="search-page-title">
+        {% if query %}Results for "{{ query }}"{% else %}Browse Movies{% endif %}
+    </h1>
+
+    <form method="get" action="{{ url_for('main.search') }}" class="search-filters">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search titles or descriptions...">
+
+        <select name="genre">
+            <option value="">All Genres</option>
+            {% for genre in genres %}
+                <option value="{{ genre.name }}" {% if genre.name == selected_genre %}selected{% endif %}>{{ genre.name }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="language">
+            <option value="">All Languages</option>
+            {% for language in languages %}
+                <option value="{{ language.name }}" {% if language.name == selected_language %}selected{% endif %}>{{ language.name }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="number" name="year" value="{{ selected_year }}" placeholder="Year" min="1888" max="2100">
+
+        <select name="min_rating">
+            <option value="">Any Rating</option>
+            {% for value in [9, 8, 7, 6, 5] %}
+                <option value="{{ value }}" {% if selected_min_rating|string == value|string %}selected{% endif %}>{{ value }}+ &#9733;</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-primary btn-sm">Apply Filters</button>
+    </form>
+
+    {% if movies %}
+    <div class="movie-grid">
+        {% for movie in movies %}
+            {{ m.movie_card(movie) }}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No movies matched your search{% if query %} for "{{ query }}"{% endif %}. Try different filters, or <a href="{{ url_for('movies.upload') }}">upload a movie</a>.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

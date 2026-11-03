@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import "partials/macros.html" as m %}
+
+{% block title %}Trending - MovieStream{% endblock %}
+
+{% block content %}
+<section class="search-page">
+    <h1 class="search-page-title">Trending Now</h1>
+
+    {% if movies %}
+    <div class="movie-grid">
+        {% for movie in movies %}{{ m.movie_card(movie) }}{% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>Nothing is marked as trending yet. Trending status is set per-movie via the upload form or the API.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

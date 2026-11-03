@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieStream - Offline</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a0f;
+            color: #f5f5f7;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            text-align: center;
+            padding: 24px;
+        }
+        .offline-box h1 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #22d3ee, #67e8f9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .offline-box p {
+            color: #a0a0ab;
+            max-width: 420px;
+            margin: 0 auto 24px;
+        }
+        .offline-box button {
+            background: #22d3ee;
+            color: #05050a;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-box">
+        <h1>You're Offline</h1>
+        <p>MovieStream can't reach the network right now. Check your connection and try again.</p>
+        <button onclick="window.location.reload()">Retry</button>
+    </div>
+</body>
+</html>

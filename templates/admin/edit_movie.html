@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ movie.title }} - MovieStream{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <div class="admin-header">
+        <h1>Edit Movie</h1>
+        <a href="{{ url_for('admin.movies') }}" class="btn btn-ghost btn-sm">&larr; Back to Movies</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="upload-flash upload-flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="upload-card">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="upload-field">
+                {{ form.title.label }}
+                {{ form.title() }}
+                {% for error in form.title.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field">
+                {{ form.description.label }}
+                {{ form.description(rows=4) }}
+                {% for error in form.description.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field-row">
+                <div class="upload-field">
+                    {{ form.genre_id.label }}
+                    {{ form.genre_id() }}
+                </div>
+                <div class="upload-field">
+                    {{ form.language_id.label }}
+                    {{ form.language_id() }}
+                </div>
+            </div>
+
+            <div class="upload-field-row">
+                <div class="upload-field">
+                    {{ form.release_year.label }}
+                    {{ form.release_year() }}
+                    {% for error in form.release_year.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="upload-field">
+                    {{ form.runtime_minutes.label }}
+                    {{ form.runtime_minutes() }}
+                    {% for error in form.runtime_minutes.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="upload-field">
+                    {{ form.rating.label }}
+                    {{ form.rating() }}
+                </div>
+            </div>
+
+            <div class="upload-field-row">
+                <div class="upload-field">
+                    {{ form.video.label }}
+                    {{ form.video() }}
+                    <p class="admin-stat-label" style="margin-top: 4px;">Current: {{ movie.video_path or "none" }}</p>
+                    {% for error in form.video.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="upload-field">
+                    {{ form.poster.label }}
+                    {{ form.poster() }}
+                    {% if movie.poster_url() %}
+                    <img src="{{ movie.poster_url() }}" alt="Current poster" style="width: 60px; border-radius: 6px; margin-top: 8px;">
+                    {% endif %}
+                </div>
+                <div class="upload-field">
+                    {{ form.trailer.label }}
+                    {{ form.trailer() }}
+                    <p class="admin-stat-label" style="margin-top: 4px;">Current: {{ movie.trailer_path or "none" }}</p>
+                </div>
+            </div>
+
+            <div class="upload-checkboxes">
+                <label>{{ form.is_featured() }} {{ form.is_featured.label.text }}</label>
+                <label>{{ form.is_trending() }} {{ form.is_trending.label.text }}</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

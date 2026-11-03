@@ -1,0 +1,151 @@
+/*
+ * movie-card.css
+ * The Netflix-style poster card: scales and reveals an action
+ * overlay on hover, with a graceful placeholder for movies that
+ * don't have a poster uploaded yet.
+ */
+
+.movie-card {
+    position: relative;
+    flex: 0 0 auto;
+    width: 220px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: transform var(--transition-base), box-shadow var(--transition-base), z-index 0s;
+}
+
+.movie-card:hover,
+.movie-card:focus-within {
+    transform: scale(1.08) translateY(-6px);
+    box-shadow: var(--shadow-card-hover);
+    z-index: 5;
+}
+
+.movie-card-poster {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background: var(--bg-card);
+    overflow: hidden;
+}
+
+.movie-card-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+}
+
+.movie-card:hover .movie-card-poster img {
+    transform: scale(1.06);
+}
+
+.movie-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
+}
+
+.movie-card-placeholder span {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent);
+    opacity: 0.5;
+}
+
+.movie-card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: var(--space-md);
+    background: linear-gradient(to top, rgba(5, 5, 10, 0.9), transparent 60%);
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    transition: opacity var(--transition-base);
+}
+
+.movie-card:hover .movie-card-overlay,
+.movie-card:focus-within .movie-card-overlay {
+    opacity: 1;
+}
+
+.movie-card-buttons {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.movie-card-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    background: rgba(20, 20, 31, 0.7);
+    backdrop-filter: blur(6px);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.movie-card-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.movie-card-btn:hover {
+    transform: scale(1.1);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.movie-card-btn-play {
+    background: var(--accent);
+    color: #05050a;
+    border-color: var(--accent);
+}
+
+.movie-card-btn-play:hover {
+    background: var(--accent-strong);
+    color: #05050a;
+}
+
+.movie-card-info {
+    padding: var(--space-sm) var(--space-sm) var(--space-md);
+}
+
+.movie-card-title {
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie-card-meta {
+    display: flex;
+    gap: var(--space-sm);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+}
+
+.movie-card-rating {
+    color: var(--rating-gold);
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .movie-card {
+        width: 140px;
+    }
+}

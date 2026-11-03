@@ -1,0 +1,25 @@
+# Environment
+.env
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Database
+instance/*.db
+
+# Uploads (user-generated content shouldn't be committed)
+uploads/*
+!uploads/.gitkeep
+static/posters/*
+!static/posters/.gitkeep
+media/movies/*
+!media/movies/.gitkeep
+
+# Migrations working files (keep the migrations folder itself once created)
+*.pyo
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

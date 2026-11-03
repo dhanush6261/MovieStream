@@ -1,0 +1,230 @@
+/*
+ * components.css
+ * Small shared UI pieces used across pages: toast notifications, the
+ * trailer modal, the movie grid (search + My List pages), the search
+ * results filter bar, and the navbar's live search suggestions.
+ */
+
+/* --- Toasts ------------------------------------------------------------ */
+
+.toast-container {
+    position: fixed;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.toast {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    font-size: 0.85rem;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+}
+
+.toast-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-success {
+    border-color: var(--accent-soft);
+}
+
+.toast-error {
+    border-color: rgba(248, 113, 113, 0.35);
+    color: var(--danger);
+}
+
+/* --- Trailer modal ------------------------------------------------------- */
+
+.trailer-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.trailer-modal.open {
+    display: flex;
+}
+
+.trailer-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.trailer-modal-box {
+    position: relative;
+    z-index: 1;
+    width: min(90vw, 900px);
+    background: #000;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+}
+
+.trailer-modal-video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: block;
+    background: #000;
+}
+
+.trailer-modal-title {
+    margin: 0;
+    padding: var(--space-md);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.trailer-modal-close {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* --- Movie grid (search + My List pages) --------------------------------- */
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-md);
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-lg) var(--space-2xl);
+}
+
+.movie-card.is-active .movie-card-btn[data-action="mylist"],
+.movie-card-btn.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #05050a;
+}
+
+/* --- Search page --------------------------------------------------------- */
+
+.search-page,
+.my-list-page {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg);
+}
+
+.search-page-title,
+.my-list-title {
+    font-size: 1.6rem;
+    margin: 0 0 var(--space-lg);
+}
+
+.search-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+}
+
+.search-filters input,
+.search-filters select {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.search-filters input[name="q"] {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* --- Navbar live search suggestions --------------------------------------- */
+
+.navbar-search-suggestions {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: var(--bg-elevated);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    z-index: 150;
+}
+
+.navbar-search-empty {
+    padding: var(--space-md);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.navbar-search-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    transition: background var(--transition-fast);
+}
+
+.navbar-search-item:hover,
+.navbar-search-item.active {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.navbar-search-item-poster {
+    width: 36px;
+    height: 54px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--bg-card-hover);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-search-item-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.navbar-search-item-poster span {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.navbar-search-item-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.navbar-search-item-info span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}

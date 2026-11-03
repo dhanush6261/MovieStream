@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Movie - MovieStream{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="upload-page">
+    <div class="upload-card">
+        <div class="upload-card-header">
+            <h1>Upload a Movie</h1>
+            <button type="button" class="btn btn-ghost btn-sm" id="scan-library-btn">Scan Library Folder</button>
+        </div>
+        <p class="upload-card-subtitle">
+            Runtime and poster are auto-detected from the video file when left blank
+            (requires ffmpeg on the server; if it's not installed, fill them in manually).
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="upload-flash upload-flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" enctype="multipart/form-data" id="upload-form" data-max-upload-bytes="{{ config.MAX_CONTENT_LENGTH }}" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="upload-field">
+                {{ form.title.label }}
+                {{ form.title(placeholder="e.g. Neon Horizon") }}
+                {% for error in form.title.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field">
+                {{ form.description.label }}
+                {{ form.description(rows=4, placeholder="What's this movie about?") }}
+                {% for error in form.description.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field-row">
+                <div class="upload-field">
+                    {{ form.genre_id.label }}
+                    {{ form.genre_id() }}
+                </div>
+                <div class="upload-field">
+                    {{ form.language_id.label }}
+                    {{ form.language_id() }}
+                </div>
+            </div>
+
+            <div class="upload-field-row">
+                <div class="upload-field">
+                    {{ form.release_year.label }}
+                    {{ form.release_year() }}
+                    {% for error in form.release_year.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="upload-field">
+                    {{ form.runtime_minutes.label }}
+                    {{ form.runtime_minutes() }}
+                </div>
+                <div class="upload-field">
+                    {{ form.rating.label }}
+                    {{ form.rating() }}
+                </div>
+            </div>
+
+            <div class="upload-field">
+                {{ form.video.label }}
+                {{ form.video(accept="video/mp4,video/webm,video/quicktime,video/x-matroska") }}
+                {% for error in form.video.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field-row">
+                <div class="upload-field">
+                    {{ form.poster.label }}
+                    {{ form.poster(accept="image/png,image/jpeg,image/webp") }}
+                    {% for error in form.poster.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="upload-field">
+                    {{ form.trailer.label }}
+                    {{ form.trailer(accept="video/mp4,video/webm,video/quicktime,video/x-matroska") }}
+                    {% for error in form.trailer.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+                </div>
+            </div>
+
+            <div class="upload-field-row upload-checkboxes">
+                <label>{{ form.is_featured() }} {{ form.is_featured.label.text }}</label>
+                <label>{{ form.is_trending() }} {{ form.is_trending.label.text }}</label>
+            </div>
+
+            <div class="upload-progress-wrap" id="upload-progress-wrap" hidden>
+                <div class="upload-progress-bar" id="upload-progress-bar"></div>
+                <span class="upload-progress-label" id="upload-progress-label">Uploading... 0%</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="upload-submit-btn">Upload Movie</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

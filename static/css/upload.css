@@ -1,0 +1,154 @@
+/*
+ * upload.css
+ * Styling for the movie upload form: fields, file inputs, checkbox
+ * row, flash messages, and the real upload progress bar.
+ */
+
+.upload-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+}
+
+.upload-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-card);
+}
+
+.upload-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.upload-card-header h1 {
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+.upload-card-subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: var(--space-sm) 0 var(--space-lg);
+}
+
+.upload-flash {
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+    font-size: 0.9rem;
+}
+
+.upload-flash-success {
+    background: rgba(34, 211, 238, 0.12);
+    color: var(--accent-strong);
+    border: 1px solid var(--accent-soft);
+}
+
+.upload-flash-error {
+    background: rgba(248, 113, 113, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.upload-field {
+    margin-bottom: var(--space-md);
+    flex: 1;
+    min-width: 0;
+}
+
+.upload-field-row {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.upload-field label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.upload-field input[type="text"],
+.upload-field input[type="number"],
+.upload-field input[type="email"],
+.upload-field input[type="password"],
+.upload-field textarea,
+.upload-field select {
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+.upload-field input[type="file"] {
+    width: 100%;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.upload-field input:focus,
+.upload-field textarea:focus,
+.upload-field select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.upload-error {
+    display: block;
+    color: var(--danger);
+    font-size: 0.78rem;
+    margin-top: 4px;
+}
+
+.upload-checkboxes {
+    margin: var(--space-md) 0 var(--space-lg);
+    gap: var(--space-lg);
+}
+
+.upload-checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.upload-checkboxes input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+}
+
+.upload-progress-wrap {
+    position: relative;
+    height: 8px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-md);
+    overflow: hidden;
+}
+
+.upload-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 150ms ease;
+}
+
+.upload-progress-label {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-top: 6px;
+}

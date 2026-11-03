@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Movies - MovieStream{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <div class="admin-header">
+        <h1>Manage Movies</h1>
+        <a href="{{ url_for('movies.upload') }}" class="btn btn-primary btn-sm">Upload New</a>
+    </div>
+
+    {% include "admin/_tabs.html" %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="upload-flash upload-flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if movies %}
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Title</th><th>Genre</th><th>Language</th><th>Year</th>
+                    <th>Rating</th><th>Flags</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movie in movies %}
+                <tr>
+                    <td class="admin-table-title">{{ movie.title }}</td>
+                    <td>{{ movie.genre.name }}</td>
+                    <td>{{ movie.language.name }}</td>
+                    <td>{{ movie.release_year }}</td>
+                    <td>{{ "%.1f"|format(movie.rating) }}</td>
+                    <td>
+                        {% if movie.is_featured %}<span class="admin-badge admin-badge-admin">Featured</span>{% endif %}
+                        {% if movie.is_trending %}<span class="admin-badge admin-badge-active">Trending</span>{% endif %}
+                    </td>
+                    <td>
+                        <div class="admin-table-actions">
+                            <a href="{{ url_for('admin.edit_movie', movie_id=movie.id) }}" class="admin-btn">Edit</a>
+                            <form method="post" action="{{ url_for('admin.delete_movie', movie_id=movie.id) }}"
+                                  onsubmit="return confirm('Delete &quot;{{ movie.title }}&quot;? This also removes its video/poster/trailer files.');">
+                                {{ confirm_form.hidden_tag() }}
+                                <button type="submit" class="admin-btn admin-btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No movies yet. <a href="{{ url_for('movies.upload') }}">Upload one</a> to get started.</p>
+    {% endif %}
+</section>
+{% endblock %}

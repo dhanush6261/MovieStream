@@ -1,0 +1,337 @@
+/*
+ * navbar.css
+ * Sticky glass navbar. Starts fully transparent over the hero image
+ * and gains a blurred dark background once the page is scrolled
+ * (toggled by navbar.js adding the .scrolled class).
+ */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: var(--navbar-height);
+    background: linear-gradient(to bottom, rgba(5, 5, 10, 0.85), transparent);
+    transition: background var(--transition-base), box-shadow var(--transition-base);
+}
+
+.navbar.scrolled {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-glass), 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.navbar-inner {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    height: 100%;
+    padding: 0 var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+}
+
+.navbar-logo {
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.navbar-logo span {
+    color: var(--accent);
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.navbar-links::-webkit-scrollbar {
+    display: none;
+}
+
+.navbar-link {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    padding: var(--space-xs) 0;
+    position: relative;
+    transition: color var(--transition-fast);
+}
+
+.navbar-link:hover,
+.navbar-link.active {
+    color: var(--text-primary);
+}
+
+.navbar-link.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: var(--radius-full);
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.navbar-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    padding: 8px 16px;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.navbar-search:focus-within {
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.navbar-search-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.navbar-search input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    width: 180px;
+}
+
+.navbar-search input::placeholder {
+    color: var(--text-muted);
+}
+
+.navbar-icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.navbar-icon-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.navbar-icon-btn:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.navbar-avatar {
+    display: block;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: border-color var(--transition-fast);
+}
+
+.navbar-avatar:hover {
+    border-color: var(--accent);
+}
+
+.navbar-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- Mobile ------------------------------------------------------------ */
+
+.navbar-mobile-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-sm);
+}
+
+.navbar-mobile-toggle span {
+    width: 22px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: var(--radius-full);
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.navbar-mobile-links {
+    display: none;
+    flex-direction: column;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    padding: var(--space-md) var(--space-lg);
+    gap: var(--space-md);
+}
+
+.navbar-mobile-links a {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.navbar-mobile-links.open {
+    display: flex;
+}
+
+/* --- User dropdown (logged in) ------------------------------------------- */
+
+.navbar-user-menu {
+    position: relative;
+}
+
+.navbar-user-menu:hover .navbar-user-dropdown,
+.navbar-user-menu:focus-within .navbar-user-dropdown,
+.navbar-user-dropdown.force-open {
+    display: flex;
+}
+
+.navbar-user-dropdown {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 170px;
+    background: var(--bg-elevated);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-sm);
+    z-index: 200;
+}
+
+.navbar-user-dropdown a,
+.navbar-user-dropdown button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.navbar-user-dropdown a:hover,
+.navbar-user-dropdown button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-primary);
+}
+
+.navbar-user-dropdown form {
+    margin: 0;
+}
+
+.navbar-mobile-logout {
+    margin: 0;
+}
+
+.navbar-mobile-logout button {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.btn-sm {
+    padding: 8px 18px;
+    font-size: 0.85rem;
+}
+
+/* --- Notifications dropdown ------------------------------------------------- */
+
+.navbar-notif-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 260px;
+    background: var(--bg-elevated);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-md);
+    z-index: 200;
+}
+
+.navbar-notif-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-sm);
+}
+
+.navbar-notif-empty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* --- Active state for the dark-mode toggle icon ------------------------------ */
+
+.navbar-icon-btn.is-active {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+@media (max-width: 900px) {
+    .navbar-links,
+    .navbar-search {
+        display: none;
+    }
+
+    .navbar-mobile-toggle {
+        display: flex;
+    }
+
+    .navbar-inner {
+        gap: var(--space-md);
+    }
+
+    .navbar-actions {
+        margin-left: auto;
+    }
+}

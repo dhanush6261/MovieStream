@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% import "partials/macros.html" as m %}
+
+{% block title %}MovieStream - Home{% endblock %}
+
+{% block content %}
+
+{% if hero_movie %}
+<section class="hero" {% if hero_movie.poster_url() %}style="--hero-bg: url('{{ hero_movie.poster_url() }}')"{% endif %}>
+    <div class="hero-overlay"></div>
+    <div class="hero-content" data-movie-id="{{ hero_movie.id }}" data-movie-title="{{ hero_movie.title }}">
+        <h1 class="hero-title">{{ hero_movie.title }}</h1>
+        <div class="hero-meta">
+            <span class="hero-badge">&#9733; {{ "%.1f"|format(hero_movie.rating) }}</span>
+            <span>{{ hero_movie.release_year }}</span>
+            <span>{{ hero_movie.runtime_display() }}</span>
+            <span>{{ hero_movie.genre.name }}</span>
+            <span>{{ hero_movie.language.name }}</span>
+        </div>
+        <p class="hero-description">{{ hero_movie.description }}</p>
+        <div class="hero-buttons">
+            <button class="btn btn-primary" data-hero-action="play">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                Play
+            </button>
+            <button class="btn btn-secondary" data-hero-action="trailer" data-trailer-url="{{ hero_movie.trailer_url() or '' }}">Trailer</button>
+            <button class="btn btn-ghost" data-hero-action="mylist" data-movie-id="{{ hero_movie.id }}" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                My List
+            </button>
+        </div>
+    </div>
+</section>
+{% else %}
+<section class="hero hero-empty">
+    <div class="hero-content">
+        <h1 class="hero-title">Welcome to MovieStream</h1>
+        <p class="hero-description">No movies in the catalog yet.</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('movies.upload') }}" class="btn btn-primary">Upload a Movie</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<div class="movie-rows">
+
+    {% if current_user.is_authenticated and continue_watching %}
+<section class="continue-watching-section">
+    <div class="section-header">
+        <h2>Continue Watching</h2>
+    </div>
+
+    <div class="continue-watching-grid">
+        {% for item in continue_watching %}
+        {% set movie = item.movie %}
+
+        <a
+            href="{{ url_for('movies.detail', movie_id=movie.id) }}"
+            class="continue-watching-card"
+            data-movie-id="{{ movie.id }}"
+        >
+            <div class="continue-watching-poster">
+                {% if movie.poster_url() %}
+                    <img
+                        src="{{ movie.poster_url() }}"
+                        alt="{{ movie.title }}"
+                        loading="lazy"
+                    >
+                {% else %}
+                    <div class="continue-watching-poster-placeholder">
+                        No Poster
+                    </div>
+                {% endif %}
+
+                <div class="continue-watching-play">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="continue-watching-info">
+                <h3>{{ movie.title }}</h3>
+
+                <div class="continue-watching-progress">
+                    <div
+                        class="continue-watching-progress-bar"
+                        style="width: {{ item.progress_percent }}%;"
+                    ></div>
+                </div>
+
+                <div class="continue-watching-meta">
+                    <span>{{ "%.0f"|format(item.progress_percent) }}% watched</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+    {{ m.movie_row("Trending Now", trending) }}
+    {{ m.movie_row("Top Rated", top_rated) }}
+    {{ m.movie_row("Recently Added", latest) }}
+
+    {% for row in genre_rows %}
+        {{ m.movie_row(row.genre.name, row.movies) }}
+    {% endfor %}
+
+    {% if not continue_watching and not trending and not top_rated and not latest and not genre_rows %}
+    <div class="empty-state">
+        <p>Nothing to show yet. <a href="{{ url_for('movies.upload') }}" style="color: var(--accent);">Upload a movie</a> to get started.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,175 @@
+/*
+ * auth.css
+ * Layout for login, register, profile, and edit-profile pages.
+ * Form field styling itself (inputs, labels, errors, flash messages)
+ * is reused from upload.css's .upload-field / .upload-error /
+ * .upload-flash classes rather than duplicated here.
+ */
+
+.auth-page {
+    max-width: 440px;
+    margin: 0 auto;
+    padding: var(--space-2xl) var(--space-lg);
+}
+
+.auth-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-card);
+}
+
+.auth-card h1 {
+    font-size: 1.6rem;
+    margin: 0 0 var(--space-xs);
+}
+
+.auth-card-subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: var(--space-lg);
+}
+
+.auth-card-footer {
+    margin-top: var(--space-lg);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.auth-card-footer a {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.auth-submit {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--space-sm);
+}
+
+/* --- Profile page --------------------------------------------------- */
+
+.profile-page {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+    flex-wrap: wrap;
+}
+
+.profile-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 3px solid var(--accent-soft);
+    flex-shrink: 0;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-header-info h1 {
+    margin: 0 0 4px;
+    font-size: 1.6rem;
+}
+
+.profile-header-info p {
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-sm);
+    max-width: 480px;
+}
+
+.profile-header-meta {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.profile-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-md);
+}
+
+/* --- Avatar preview on the edit-profile page --------------------------- */
+
+.avatar-preview-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.avatar-upload-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.avatar-file-field {
+    margin-bottom: 0;
+}
+
+.avatar-remove-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.avatar-remove-option input {
+    width: auto;
+    margin: 0;
+    accent-color: var(--accent);
+}
+
+.avatar-remove-option label {
+    margin: 0;
+    cursor: pointer;
+}
+
+.avatar-preview {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    background: var(--bg-elevated);
+    flex-shrink: 0;
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-remove-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.avatar-remove-option input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.avatar-remove-option label {
+    cursor: pointer;
+}

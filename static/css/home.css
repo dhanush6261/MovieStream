@@ -1,0 +1,254 @@
+/*
+ * home.css
+ * Layout for the stack of horizontally-scrolling movie rows that
+ * sit below the hero banner, including Continue Watching.
+ */
+
+/* --- Home movie rows ------------------------------------------------ */
+
+.movie-rows {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--space-xl) 0 var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.movie-row-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-md);
+    padding: 0 var(--space-lg);
+}
+
+.movie-row-scroller {
+    display: flex;
+    gap: var(--space-md);
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: var(--space-sm) var(--space-lg) var(--space-lg);
+
+    /* Negative top margin so a hovered/scaled card's shadow isn't clipped. */
+    margin-top: calc(var(--space-sm) * -1);
+}
+
+.movie-row-scroller::-webkit-scrollbar {
+    height: 6px;
+}
+
+
+/* --- Continue Watching ---------------------------------------------- */
+
+.continue-watching-section {
+    width: 100%;
+}
+
+.continue-watching-section .section-header {
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-md);
+}
+
+.continue-watching-section .section-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.continue-watching-grid {
+    display: flex;
+    gap: var(--space-md);
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: var(--space-sm) var(--space-lg) var(--space-lg);
+
+    /* Prevent hover effects from being clipped. */
+    margin-top: calc(var(--space-sm) * -1);
+
+    scrollbar-width: thin;
+}
+
+.continue-watching-grid::-webkit-scrollbar {
+    height: 6px;
+}
+
+.continue-watching-card {
+    position: relative;
+    flex: 0 0 240px;
+    width: 240px;
+    overflow: hidden;
+
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+
+    color: var(--text-primary);
+
+    transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.continue-watching-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+
+/* --- Poster ---------------------------------------------------------- */
+
+.continue-watching-poster {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--bg-card);
+}
+
+.continue-watching-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    transition: transform var(--transition-fast);
+}
+
+.continue-watching-card:hover .continue-watching-poster img {
+    transform: scale(1.04);
+}
+
+.continue-watching-poster-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+
+/* --- Play overlay ---------------------------------------------------- */
+
+.continue-watching-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translate(-50%, -50%) scale(0.9);
+
+    border-radius: var(--radius-full);
+
+    background: rgba(0, 0, 0, 0.72);
+    color: var(--text-primary);
+
+    opacity: 0;
+
+    transition:
+        opacity var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.continue-watching-play svg {
+    width: 22px;
+    height: 22px;
+    margin-left: 2px;
+}
+
+.continue-watching-card:hover .continue-watching-play {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+
+/* --- Card information ----------------------------------------------- */
+
+.continue-watching-info {
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+}
+
+.continue-watching-info h3 {
+    margin: 0 0 var(--space-sm);
+
+    font-size: 0.95rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* --- Progress bar ---------------------------------------------------- */
+
+.continue-watching-progress {
+    width: 100%;
+    height: 4px;
+
+    overflow: hidden;
+
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.continue-watching-progress-bar {
+    height: 100%;
+    width: 0;
+
+    border-radius: inherit;
+    background: var(--accent);
+
+    transition: width 300ms ease;
+}
+
+
+/* --- Progress metadata ---------------------------------------------- */
+
+.continue-watching-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: var(--space-xs);
+
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+
+/* --- Responsive ------------------------------------------------------ */
+
+@media (max-width: 768px) {
+    .continue-watching-card {
+        flex-basis: 200px;
+        width: 200px;
+    }
+
+    .continue-watching-section .section-header {
+        padding: 0 var(--space-md);
+    }
+
+    .continue-watching-grid {
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .continue-watching-card {
+        flex-basis: 170px;
+        width: 170px;
+    }
+
+    .continue-watching-info h3 {
+        font-size: 0.88rem;
+    }
+}

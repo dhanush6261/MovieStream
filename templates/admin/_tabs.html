@@ -1,0 +1,6 @@
+<nav class="admin-tabs">
+    <a href="{{ url_for('admin.dashboard') }}" class="admin-tab {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{{ url_for('admin.movies') }}" class="admin-tab {% if request.endpoint in ('admin.movies', 'admin.edit_movie') %}active{% endif %}">Movies</a>
+    <a href="{{ url_for('admin.categories') }}" class="admin-tab {% if request.endpoint == 'admin.categories' %}active{% endif %}">Categories</a>
+    <a href="{{ url_for('admin.users') }}" class="admin-tab {% if request.endpoint == 'admin.users' %}active{% endif %}">Users</a>
+</nav>

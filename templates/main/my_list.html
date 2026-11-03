@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "partials/macros.html" as m %}
+
+{% block title %}My List - MovieStream{% endblock %}
+
+{% block content %}
+<section class="my-list-page">
+    <h1 class="my-list-title">My List</h1>
+
+    {% if server_rendered %}
+        {% if movies %}
+        <div class="movie-grid">
+            {% for movie in movies %}{{ m.movie_card(movie) }}{% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>Your list is empty. Add movies with the "My List" button on any title.</p>
+            <a href="{{ url_for('main.home') }}" class="btn btn-primary">Browse Movies</a>
+        </div>
+        {% endif %}
+    {% else %}
+    <div class="movie-grid" id="my-list-grid">
+        <p class="empty-state" id="my-list-loading">Loading your list...</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if not server_rendered %}
+<script src="{{ url_for('static', filename='js/my-list.js') }}"></script>
+{% endif %}
+{% endblock %}

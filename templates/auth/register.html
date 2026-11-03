@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - MovieStream{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="auth-card">
+        <h1>Create your account</h1>
+        <p class="auth-card-subtitle">Join MovieStream to save favorites across devices.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="upload-flash upload-flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="upload-field">
+                {{ form.username.label }}
+                {{ form.username(placeholder="e.g. dhanush") }}
+                {% for error in form.username.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field">
+                {{ form.email.label }}
+                {{ form.email(placeholder="you@example.com") }}
+                {% for error in form.email.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field">
+                {{ form.password.label }}
+                {{ form.password(placeholder="At least 8 characters") }}
+                {% for error in form.password.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <div class="upload-field">
+                {{ form.confirm_password.label }}
+                {{ form.confirm_password(placeholder="Re-enter your password") }}
+                {% for error in form.confirm_password.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-submit">Create Account</button>
+        </form>
+
+        <p class="auth-card-footer">
+            Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

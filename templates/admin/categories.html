@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Categories - MovieStream{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <div class="admin-header">
+        <h1>Manage Categories</h1>
+    </div>
+
+    {% include "admin/_tabs.html" %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="upload-flash upload-flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="upload-card" style="margin-bottom: var(--space-xl);">
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="upload-field-row">
+                <div class="upload-field" style="flex: 2;">
+                    {{ form.name.label }}
+                    {{ form.name(placeholder="e.g. Musical") }}
+                    {% for error in form.name.errors %}<span class="upload-error">{{ error }}</span>{% endfor %}
+                </div>
+                <div class="upload-field" style="flex: 0 0 auto; align-self: flex-end;">
+                    <button type="submit" class="btn btn-primary">Add Genre</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if genres %}
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th>Name</th><th>Movies using it</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for genre in genres %}
+                <tr>
+                    <td>{{ genre.name }}</td>
+                    <td>{{ movie_counts[genre.id] }}</td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin.delete_category', genre_id=genre.id) }}"
+                              onsubmit="return confirm('Delete genre &quot;{{ genre.name }}&quot;?');">
+                            {{ confirm_form.hidden_tag() }}
+                            <button type="submit" class="admin-btn admin-btn-danger" {% if movie_counts[genre.id] > 0 %}disabled title="In use by {{ movie_counts[genre.id] }} movie(s)"{% endif %}>Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No genres yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

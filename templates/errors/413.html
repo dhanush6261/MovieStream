@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}413 - File Too Large{% endblock %}
+{% block content %}
+<section class="error-page">
+    <h1 class="error-code">413</h1>
+    <p class="error-message">
+        That file is larger than the current upload limit ({{ "%.0f"|format(max_gb) }} GB).
+        Try a smaller file, or ask whoever runs this server to raise <code>MAX_UPLOAD_SIZE_GB</code> in <code>.env</code>.
+    </p>
+    <a href="{{ url_for('movies.upload') }}" class="btn btn-primary">Back to Upload</a>
+</section>
+{% endblock %}

@@ -1,0 +1,83 @@
+/*
+ * variables.css
+ * Design tokens for MovieStream's dark, cinematic theme.
+ * Every other stylesheet reads colors/spacing from here so the
+ * whole app can be re-themed by editing a single file.
+ */
+
+:root {
+    /* --- Surfaces --- */
+    --bg-base: #05050a;
+    --bg-elevated: #0d0d15;
+    --bg-card: #14141f;
+    --bg-card-hover: #1c1c2b;
+    --bg-glass: rgba(13, 13, 21, 0.72);
+
+    /* --- Accent (cyan, not the usual Netflix red) --- */
+    --accent: #22d3ee;
+    --accent-soft: rgba(34, 211, 238, 0.16);
+    --accent-strong: #67e8f9;
+
+    /* --- Text --- */
+    --text-primary: #f5f5f7;
+    --text-secondary: #a0a0ab;
+    --text-muted: #6b6b76;
+
+    /* --- Status --- */
+    --rating-gold: #facc15;
+    --danger: #f87171;
+
+    /* --- Radii --- */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-full: 999px;
+
+    /* --- Shadows --- */
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --shadow-card-hover: 0 20px 45px rgba(34, 211, 238, 0.18);
+    --shadow-glass: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+
+    /* --- Spacing scale --- */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 40px;
+    --space-2xl: 64px;
+
+    /* --- Motion --- */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 450ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* --- Layout --- */
+    --navbar-height: 72px;
+    --content-max-width: 1600px;
+}
+
+/*
+ * Light theme override, toggled by navbar.js setting
+ * data-theme="light" on <html> (persisted in localStorage). Every
+ * other stylesheet only ever references the variables above, so
+ * overriding them here is enough to re-theme the whole app.
+ */
+:root[data-theme="light"] {
+    --bg-base: #f5f5f7;
+    --bg-elevated: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #eef0f4;
+    --bg-glass: rgba(255, 255, 255, 0.78);
+
+    --accent: #0891b2;
+    --accent-soft: rgba(8, 145, 178, 0.12);
+    --accent-strong: #0e7490;
+
+    --text-primary: #14141f;
+    --text-secondary: #4b4b58;
+    --text-muted: #7a7a87;
+
+    --shadow-card: 0 10px 30px rgba(20, 20, 31, 0.12);
+    --shadow-card-hover: 0 20px 45px rgba(8, 145, 178, 0.16);
+    --shadow-glass: 0 1px 0 rgba(20, 20, 31, 0.05) inset;
+}

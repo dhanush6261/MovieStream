@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - MovieStream{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <div class="admin-header">
+        <h1>Admin Dashboard</h1>
+    </div>
+
+    {% include "admin/_tabs.html" %}
+
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <p class="admin-stat-value">{{ total_movies }}</p>
+            <p class="admin-stat-label">Movies</p>
+        </div>
+        <div class="admin-stat-card">
+            <p class="admin-stat-value">{{ total_users }}</p>
+            <p class="admin-stat-label">Users</p>
+        </div>
+        <div class="admin-stat-card">
+            <p class="admin-stat-value">{{ total_genres }}</p>
+            <p class="admin-stat-label">Genres</p>
+        </div>
+        <div class="admin-stat-card">
+            <p class="admin-stat-value">{{ total_languages }}</p>
+            <p class="admin-stat-label">Languages</p>
+        </div>
+        <div class="admin-stat-card">
+            <p class="admin-stat-value">{{ total_favorites }}</p>
+            <p class="admin-stat-label">Favorites saved</p>
+        </div>
+        <div class="admin-stat-card">
+            <p class="admin-stat-value">{{ storage.display }}</p>
+            <p class="admin-stat-label">Storage used ({{ storage.file_count }} files)</p>
+        </div>
+    </div>
+
+    <h2 class="admin-section-title">Most Favorited</h2>
+    {% if most_favorited %}
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th>Title</th><th>Genre</th><th>Favorites</th></tr></thead>
+            <tbody>
+                {% for movie, favorite_count in most_favorited %}
+                <tr>
+                    <td class="admin-table-title"><a href="{{ url_for('movies.detail', movie_id=movie.id) }}">{{ movie.title }}</a></td>
+                    <td>{{ movie.genre.name }}</td>
+                    <td>{{ favorite_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No favorites saved yet.</p>
+    {% endif %}
+
+    <h2 class="admin-section-title">Recently Added Movies</h2>
+    {% if recent_movies %}
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th>Title</th><th>Genre</th><th>Added</th></tr></thead>
+            <tbody>
+                {% for movie in recent_movies %}
+                <tr>
+                    <td class="admin-table-title"><a href="{{ url_for('movies.detail', movie_id=movie.id) }}">{{ movie.title }}</a></td>
+                    <td>{{ movie.genre.name }}</td>
+                    <td>{{ movie.created_at.strftime('%b %d, %Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No movies yet.</p>
+    {% endif %}
+
+    <h2 class="admin-section-title">Recently Joined Users</h2>
+    {% if recent_users %}
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th>Username</th><th>Email</th><th>Joined</th></tr></thead>
+            <tbody>
+                {% for user in recent_users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.created_at.strftime('%b %d, %Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No users yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% macro movie_card(movie) %}
+<div class="movie-card" tabindex="0" data-movie-id="{{ movie.id }}" data-movie-title="{{ movie.title }}">
+    <div class="movie-card-poster">
+        {% if movie.poster_url() %}
+            <img src="{{ movie.poster_url() }}" alt="{{ movie.title }} poster" loading="lazy">
+        {% else %}
+            <div class="movie-card-placeholder">
+                <span>{{ movie.title[:1] }}</span>
+            </div>
+        {% endif %}
+
+        <div class="movie-card-overlay">
+            <div class="movie-card-buttons">
+                <button class="movie-card-btn movie-card-btn-play" data-action="play" data-movie-id="{{ movie.id }}"
+                        title="Play" aria-label="Play {{ movie.title }}">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <button class="movie-card-btn" data-action="mylist" data-movie-id="{{ movie.id }}"
+                        title="Add to My List" aria-label="Add {{ movie.title }} to my list" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+                <button class="movie-card-btn" data-action="watch-later" data-movie-id="{{ movie.id }}"
+                        title="Watch Later" aria-label="Watch {{ movie.title }} later" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                </button>
+                <button class="movie-card-btn" data-action="share" data-movie-id="{{ movie.id }}"
+                        title="Share" aria-label="Share {{ movie.title }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6L8.6 10.5"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <a class="movie-card-info" href="{{ url_for('movies.detail', movie_id=movie.id) }}">
+        <p class="movie-card-title">{{ movie.title }}</p>
+        <div class="movie-card-meta">
+            <span class="movie-card-rating">&#9733; {{ "%.1f"|format(movie.rating) }}</span>
+            <span>{{ movie.release_year }}</span>
+            <span>{{ movie.runtime_display() }}</span>
+            <span>{{ movie.language.name }}</span>
+        </div>
+    </a>
+</div>
+{% endmacro %}
+
+
+{% macro movie_row(title, movies) %}
+{% if movies %}
+<section class="movie-row">
+    <h2 class="movie-row-title">{{ title }}</h2>
+    <div class="movie-row-scroller">
+        {% for movie in movies %}
+            {{ movie_card(movie) }}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endmacro %}

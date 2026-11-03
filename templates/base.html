@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MovieStream{% endblock %}</title>
+
+    <script>
+        // Applied synchronously, before CSS renders, so switching pages
+        // never shows a flash of the wrong theme.
+        (function () {
+            var saved = localStorage.getItem("moviestream_theme");
+            if (saved === "light") document.documentElement.setAttribute("data-theme", "light");
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/hero.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/movie-card.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body data-authenticated="{{ 'true' if current_user.is_authenticated else 'false' }}">
+
+    {% include "partials/navbar.html" %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "partials/footer.html" %}
+
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/horizontal-scroll.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/movie-card.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/hero.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sw-register.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
