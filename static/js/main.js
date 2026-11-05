@@ -34,6 +34,17 @@ window.MovieStream = (function () {
         }, 3000);
     }
 
+    // Escape API data before it goes into innerHTML. Movie titles etc.
+    // are user-editable, so interpolating them raw is stored XSS.
+    function escapeHTML(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
     function isAuthenticated() {
         return document.body.dataset.authenticated === "true";
     }
@@ -257,6 +268,7 @@ window.MovieStream = (function () {
 
     return {
         toast,
+        escapeHTML,
         isAuthenticated,
         getMyList,
         isInMyList,

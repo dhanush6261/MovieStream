@@ -49,7 +49,7 @@
                         <div class="admin-table-actions">
                             <a href="{{ url_for('admin.edit_movie', movie_id=movie.id) }}" class="admin-btn">Edit</a>
                             <form method="post" action="{{ url_for('admin.delete_movie', movie_id=movie.id) }}"
-                                  onsubmit="return confirm('Delete &quot;{{ movie.title }}&quot;? This also removes its video/poster/trailer files.');">
+                                  onsubmit='return confirm({{ ("Delete \"" ~ movie.title ~ "\"? This also removes its video/poster/trailer files.")|tojson }});'>
                                 {{ confirm_form.hidden_tag() }}
                                 <button type="submit" class="admin-btn admin-btn-danger">Delete</button>
                             </form>

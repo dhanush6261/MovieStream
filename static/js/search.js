@@ -29,20 +29,21 @@
             return;
         }
 
+        const esc = window.MovieStream.escapeHTML;
         suggestionsBox.innerHTML = movies
             .map(
                 (movie, index) => `
-                <a href="/movie/${movie.id}" class="navbar-search-item" data-index="${index}">
+                <a href="/movie/${Number(movie.id)}" class="navbar-search-item" data-index="${index}">
                     <div class="navbar-search-item-poster">
                         ${
                             movie.poster_url
-                                ? `<img src="${movie.poster_url}" alt="">`
-                                : `<span>${movie.title.charAt(0)}</span>`
+                                ? `<img src="${esc(movie.poster_url)}" alt="">`
+                                : `<span>${esc(movie.title.charAt(0))}</span>`
                         }
                     </div>
                     <div class="navbar-search-item-info">
-                        <p>${movie.title}</p>
-                        <span>${movie.release_year} &middot; ${movie.genre || ""}</span>
+                        <p>${esc(movie.title)}</p>
+                        <span>${esc(movie.release_year)} &middot; ${esc(movie.genre)}</span>
                     </div>
                 </a>`
             )

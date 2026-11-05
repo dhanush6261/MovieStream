@@ -8,6 +8,8 @@ pagination. Kept separate from routes.py so the query logic can be
 tested independently of the HTTP layer.
 """
 
+from sqlalchemy.orm import contains_eager
+
 from models import Genre, Language, Movie
 
 SORT_OPTIONS = {
@@ -24,7 +26,13 @@ def build_movie_query(args):
     args: a Flask request.args-like mapping (MultiDict).
     Supported params: q, genre, language, year, min_rating, ids, sort.
     """
-    query = Movie.query.join(Genre).join(Language)
+    # contains_eager reuses these joins to fill movie.genre/movie.language,
+    # so to_dict() doesn't fire two extra queries per movie.
+    query = (
+        Movie.query.join(Movie.genre)
+        .join(Movie.language)
+        .options(contains_eager(Movie.genre), contains_eager(Movie.language))
+    )
 
     q = args.get("q", "").strip()
     if q:

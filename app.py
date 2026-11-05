@@ -16,6 +16,7 @@ from flask import Flask, render_template
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 
 from config import get_config
 from database import db, init_db, migrate_movies_out_of_static, seed_admin_user, seed_db
@@ -26,6 +27,7 @@ from database import db, init_db, migrate_movies_out_of_static, seed_admin_user,
 # via .init_app() inside create_app().
 bcrypt = Bcrypt()
 login_manager = LoginManager()
+csrf = CSRFProtect()
 
 
 def create_app(config_object=None):
@@ -40,7 +42,16 @@ def create_app(config_object=None):
     app = Flask(__name__)
     app.config.from_object(config_object or get_config())
 
+    if not app.config.get("SECRET_KEY"):
+        # Production has no fallback key on purpose: a guessable key lets
+        # anyone forge session cookies (including an admin's).
+        raise RuntimeError("SECRET_KEY is not set. Set it in the environment or .env.")
+
     # --- Extensions -----------------------------------------------------
+    # App-wide CSRF protection: every POST/PUT/PATCH/DELETE (forms and the
+    # JSON API) needs a token. api.js sends it as X-CSRFToken from the
+    # <meta name="csrf-token"> tag in base.html.
+    csrf.init_app(app)
     db.init_app(app)
     Migrate(app, db)
     bcrypt.init_app(app)
@@ -87,6 +98,14 @@ def create_app(config_object=None):
 
     # --- CLI commands -------------------------------------------------------
     register_cli_commands(app)
+
+    @app.after_request
+    def set_security_headers(response):
+        # ponytail: no CSP yet -- inline scripts/onsubmit handlers would need
+        # nonces first. These two are free.
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+        return response
 
     return app
 

@@ -11,7 +11,10 @@
  * offline-page requirement.
  */
 
-const CACHE_NAME = "moviestream-shell-v1";
+// Bump this whenever a cached file changes: assets are served
+// cache-first, so without a new name returning visitors keep the old
+// JS/CSS indefinitely. (v2: api.js now sends the CSRF header.)
+const CACHE_NAME = "moviestream-shell-v2";
 const APP_SHELL = [
     "/static/css/variables.css",
     "/static/css/base.css",
