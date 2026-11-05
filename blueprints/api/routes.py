@@ -9,9 +9,9 @@ Endpoints:
     GET    /api/movies/search       Lightweight search for the navbar live dropdown
     POST   /api/movies/upload       Create a movie from an uploaded video (+ optional poster/trailer) (ADMIN ONLY)
     GET    /api/movies/<id>         Single movie
-    PATCH  /api/movies/<id>         Partial update
-    DELETE /api/movies/<id>         Delete a movie (and its files)
-    POST   /api/movies/scan         Automatic movie detection: register any new files in static/movies
+    PATCH  /api/movies/<id>         Partial update (ADMIN ONLY)
+    DELETE /api/movies/<id>         Delete a movie (and its files) (ADMIN ONLY)
+    POST   /api/movies/scan         Automatic movie detection: register any new files in media/movies (ADMIN ONLY)
     GET    /api/genres              List of genres
     GET    /api/languages           List of languages
 
@@ -133,6 +133,7 @@ def upload_movie():
 
 
 @api_bp.route("/movies/<int:movie_id>", methods=["PATCH", "PUT"])
+@admin_required
 def update_movie(movie_id):
     movie = Movie.query.get_or_404(movie_id)
     data = request.get_json(silent=True) or {}
@@ -166,6 +167,7 @@ def update_movie(movie_id):
 
 
 @api_bp.route("/movies/<int:movie_id>", methods=["DELETE"])
+@admin_required
 def delete_movie(movie_id):
     movie = Movie.query.get_or_404(movie_id)
     delete_movie_and_files(movie)
@@ -173,8 +175,9 @@ def delete_movie(movie_id):
 
 
 @api_bp.route("/movies/scan", methods=["POST"])
+@admin_required
 def scan_library():
-    """Automatic movie detection: register any new files dropped into static/movies."""
+    """Automatic movie detection: register any new files dropped into media/movies."""
     created = sync_library_from_disk()
     return jsonify({
         "created_count": len(created),

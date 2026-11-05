@@ -20,7 +20,15 @@ from wtforms import (
     StringField,
     TextAreaField,
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional
+from wtforms.validators import (
+    DataRequired,
+    Email,
+    EqualTo,
+    InputRequired,
+    Length,
+    NumberRange,
+    Optional,
+)
 
 
 class MovieUploadForm(FlaskForm):
@@ -207,9 +215,12 @@ class EditMovieForm(FlaskForm):
         "Release Year",
         validators=[DataRequired(), NumberRange(min=1888, max=2100)],
     )
+    # InputRequired + min=0: movies registered by the library scan can
+    # have runtime 0 (no ffprobe), and DataRequired treats 0 as missing,
+    # which made those movies impossible to edit.
     runtime_minutes = IntegerField(
         "Runtime (minutes)",
-        validators=[DataRequired(), NumberRange(min=1, max=1000)],
+        validators=[InputRequired(), NumberRange(min=0, max=1000)],
     )
     rating = DecimalField(
         "Rating (0-10)", places=1, validators=[Optional(), NumberRange(min=0, max=10)]

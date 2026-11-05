@@ -4,8 +4,14 @@
  */
 
 window.MovieStreamAPI = (function () {
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+
     async function request(path, options = {}) {
-        const response = await fetch(path, options);
+        // Flask-WTF's CSRFProtect rejects state-changing requests without this header.
+        const headers = Object.assign({}, options.headers);
+        if (csrfMeta) headers["X-CSRFToken"] = csrfMeta.content;
+
+        const response = await fetch(path, { ...options, headers });
 
         let data = null;
 

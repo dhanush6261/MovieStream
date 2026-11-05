@@ -25,6 +25,9 @@ class BaseConfig:
     # Flask-WTF / session security
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
     WTF_CSRF_ENABLED = True
+    # Tokens stay valid for the whole session instead of expiring after
+    # an hour, so a long-open page's JS (favorites, ratings) keeps working.
+    WTF_CSRF_TIME_LIMIT = None
 
     # SQLAlchemy
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -66,6 +69,8 @@ class ProductionConfig(BaseConfig):
     """Production: PostgreSQL, secure cookies, debug off."""
 
     DEBUG = False
+    # No fallback: create_app() refuses to start without a real key.
+    SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL", "postgresql://user:password@localhost:5432/moviestream"
     )

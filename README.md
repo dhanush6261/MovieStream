@@ -6,7 +6,15 @@ A Netflix-style movie streaming platform built with Flask.
 
 A real admin role with real enforcement, not just a hidden page.
 
-- **Default admin account** seeded automatically on first run: `admin@moviestream.com` / `admin123`. **Change this password immediately if this ever runs anywhere but your own machine.** Promote any other user to admin with `flask --app app create-admin someone@example.com`.
+- **Default admin account** seeded automatically on first run when the users table is empty. Set `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`; without `ADMIN_PASSWORD` the `admin@moviestream.com` / `admin123` fallback is only used in development (`DEBUG`), never in production. Promote any other user to admin with `flask --app app create-admin someone@example.com`.
+- **Production requires `SECRET_KEY`**: with `FLASK_ENV=production` the app refuses to start if it isn't set.
+- **CSRF**: every state-changing request (forms *and* the JSON API) needs a CSRF token. `api.js` sends it automatically as `X-CSRFToken`; programmatic API clients must do the same.
+
+## Running tests
+
+```bash
+python -m unittest discover tests
+```
 - **`is_admin` and `is_active` columns** on `User`. Every `/admin/*` route is protected by an `@admin_required` decorator: not-logged-in visitors are redirected to login, logged-in non-admins get a real 403 page.
 - **Dashboard** (`/admin`): live counts (movies, users, genres, languages, favorites), real disk-space usage (walks `static/movies` + `static/posters`, not just a database guess), most-favorited movies, recent movies/users.
 - **Movie management** (`/admin/movies`): edit any movie's metadata, optionally replace its video/poster/trailer (old file is deleted once the new one is confirmed saved); delete a movie (removes its DB row *and* its files on disk).

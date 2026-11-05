@@ -189,7 +189,18 @@ def seed_admin_user(app):
     are independent concerns -- an install with movies but no users
     yet should still get an admin account.
     """
+    import os
+
     from models import User
+
+    # The well-known admin123 password is only acceptable on a local
+    # debug run. Anywhere else, ADMIN_PASSWORD must be set explicitly
+    # (or promote a registered user with `flask create-admin`).
+    password = os.environ.get("ADMIN_PASSWORD") or ("admin123" if app.config.get("DEBUG") else None)
+    if not password:
+        print("[seed_admin_user] Skipped: set ADMIN_PASSWORD to create the default admin.")
+        return
+    email = os.environ.get("ADMIN_EMAIL", "admin@moviestream.com").lower()
 
     with app.app_context():
         if User.query.first() is not None:
@@ -202,8 +213,8 @@ def seed_admin_user(app):
         # even though the domain doesn't need to actually exist for
         # local login to work (WTForms only checks syntax, not
         # deliverability).
-        admin = User(username="admin", email="admin@moviestream.com", is_admin=True)
-        admin.set_password("admin123")
+        admin = User(username="admin", email=email, is_admin=True)
+        admin.set_password(password)
         db.session.add(admin)
         db.session.commit()
 

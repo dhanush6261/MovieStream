@@ -87,11 +87,20 @@ class Movie(db.Model):
     language = db.relationship("Language", back_populates="movies")
 
     ratings = db.relationship(
-    "Rating",
-    back_populates="movie",
-    cascade="all, delete-orphan",
-    lazy="select",
-)
+        "Rating",
+        back_populates="movie",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+
+    # Without this cascade, deleting a favorited movie left orphan
+    # Favorite rows on SQLite and failed with an FK error on Postgres.
+    favorites = db.relationship(
+        "Favorite",
+        back_populates="movie",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
 
     watch_history = db.relationship(
         "WatchHistory",
@@ -271,7 +280,7 @@ class Favorite(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     user = db.relationship("User", back_populates="favorites")
-    movie = db.relationship("Movie")
+    movie = db.relationship("Movie", back_populates="favorites")
 
     def __repr__(self):
         return f"<Favorite user={self.user_id} movie={self.movie_id}>"

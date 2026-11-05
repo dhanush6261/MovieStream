@@ -50,7 +50,7 @@
                     <td>{{ movie_counts[genre.id] }}</td>
                     <td>
                         <form method="post" action="{{ url_for('admin.delete_category', genre_id=genre.id) }}"
-                              onsubmit="return confirm('Delete genre &quot;{{ genre.name }}&quot;?');">
+                              onsubmit='return confirm({{ ("Delete genre \"" ~ genre.name ~ "\"?")|tojson }});'>
                             {{ confirm_form.hidden_tag() }}
                             <button type="submit" class="admin-btn admin-btn-danger" {% if movie_counts[genre.id] > 0 %}disabled title="In use by {{ movie_counts[genre.id] }} movie(s)"{% endif %}>Delete</button>
                         </form>
