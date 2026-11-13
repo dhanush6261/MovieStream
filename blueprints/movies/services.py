@@ -13,6 +13,7 @@ logic lives outside route handlers).
 import os
 
 from flask import current_app
+from sqlalchemy.exc import IntegrityError
 
 from database import db
 from media import (
@@ -36,8 +37,18 @@ class DuplicateVideoError(Exception):
         )
 
 
+def _remove_files(paths):
+    """Best-effort delete; a missing or locked file must not mask the real result."""
+    for path in paths:
+        try:
+            if path and os.path.exists(path):
+                os.remove(path)
+        except OSError:
+            current_app.logger.warning("Could not delete %s", path)
+
+
 def get_movie_or_none(movie_id):
-    return Movie.query.get(movie_id)
+    return db.session.get(Movie, movie_id)
 
 
 def get_similar_movies(movie, limit=12):
@@ -95,7 +106,12 @@ def sync_library_from_disk():
         db.session.flush()
 
     existing_hashes = {m.file_hash for m in Movie.query.filter(Movie.file_hash.isnot(None))}
-    existing_video_paths = {m.video_path for m in Movie.query.filter(Movie.video_path.isnot(None))}
+    # Trailers count as "known" too: uploaded trailers get a random
+    # suffix (e.g. foo-trailer-1a2b3c4d.mp4), so the name check below
+    # misses them and they'd otherwise be registered as movies.
+    known_files = set()
+    for video_path, trailer_path in db.session.query(Movie.video_path, Movie.trailer_path):
+        known_files.update(p for p in (video_path, trailer_path) if p)
 
     created = []
 
@@ -103,7 +119,7 @@ def sync_library_from_disk():
         ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
         if ext not in allowed_ext:
             continue
-        if filename in existing_video_paths:
+        if filename in known_files:
             continue
         # Skip files that look like trailers of an already-registered movie.
         if filename.endswith("-trailer." + ext):
@@ -197,21 +213,28 @@ def create_movie_from_upload(
         os.remove(video_abs_path)
         raise DuplicateVideoError(existing)
 
+    # Everything written to disk for this upload, so it can be cleaned up
+    # if the DB insert fails.
+    saved_paths = [video_abs_path]
+
     # --- Optional trailer ---
     trailer_filename = None
     if trailer_file and getattr(trailer_file, "filename", ""):
-        trailer_filename, _ = save_upload(trailer_file, video_folder)
+        trailer_filename, trailer_abs_path = save_upload(trailer_file, video_folder)
+        saved_paths.append(trailer_abs_path)
 
     # --- Poster: use the uploaded one, or auto-generate from the video ---
     poster_filename = None
     if poster_file and getattr(poster_file, "filename", ""):
-        poster_filename, _ = save_upload(poster_file, poster_folder)
+        poster_filename, poster_abs_path = save_upload(poster_file, poster_folder)
+        saved_paths.append(poster_abs_path)
     else:
         os.makedirs(poster_folder, exist_ok=True)
         candidate_name = os.path.splitext(video_filename)[0] + ".jpg"
         candidate_path = os.path.join(poster_folder, candidate_name)
         if generate_poster_from_video(video_abs_path, candidate_path):
             poster_filename = candidate_name
+            saved_paths.append(candidate_path)
         # If ffmpeg isn't available, poster_filename stays None and
         # the movie card/hero fall back to the CSS placeholder --
         # never a fake stock image.
@@ -237,7 +260,21 @@ def create_movie_from_upload(
         language_id=language_id,
     )
     db.session.add(movie)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except IntegrityError:
+        # Two simultaneous uploads of the same file can both pass the
+        # hash check above; the unique constraint catches the second.
+        db.session.rollback()
+        _remove_files(saved_paths)
+        existing = Movie.query.filter_by(file_hash=file_hash).first()
+        if existing is None:
+            raise
+        raise DuplicateVideoError(existing)
+    except Exception:
+        db.session.rollback()
+        _remove_files(saved_paths)
+        raise
     return movie
 
 
@@ -246,24 +283,31 @@ def delete_movie_and_files(movie):
     Delete a Movie row and its video/trailer/poster files on disk.
     Shared by the API's DELETE /api/movies/<id> and the admin panel's
     delete button, so the cleanup logic only lives in one place.
-    """
-    from flask import current_app
 
+    The row is deleted (and committed) first; files are only removed
+    once that succeeded, so a failed commit never leaves the DB
+    pointing at files that are already gone.
+    """
     movie_folder = current_app.config["MOVIE_FOLDER"]
     poster_folder = current_app.config["POSTER_FOLDER"]
 
-    for filename, folder in (
-        (movie.video_path, movie_folder),
-        (movie.trailer_path, movie_folder),
-        (movie.poster_path, poster_folder),
-    ):
-        if filename:
-            path = os.path.join(folder, filename)
-            if os.path.exists(path):
-                os.remove(path)
+    paths = [
+        os.path.join(folder, filename)
+        for filename, folder in (
+            (movie.video_path, movie_folder),
+            (movie.trailer_path, movie_folder),
+            (movie.poster_path, poster_folder),
+        )
+        if filename
+    ]
 
     db.session.delete(movie)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+    _remove_files(paths)
 
 
 def update_movie_from_edit_form(movie, form):
@@ -276,8 +320,6 @@ def update_movie_from_edit_form(movie, form):
     Raises DuplicateVideoError if a replacement video's hash matches
     a *different* movie already in the library.
     """
-    from flask import current_app
-
     video_folder = current_app.config["MOVIE_FOLDER"]
     poster_folder = current_app.config["POSTER_FOLDER"]
 
@@ -291,6 +333,10 @@ def update_movie_from_edit_form(movie, form):
     movie.is_featured = form.is_featured.data
     movie.is_trending = form.is_trending.data
 
+    # Old files are only deleted after the commit succeeds; new files are
+    # deleted if it fails. Either way the DB never points at a missing file.
+    new_paths, old_paths = [], []
+
     if form.video.data and getattr(form.video.data, "filename", ""):
         new_filename, new_abs_path = save_upload(form.video.data, video_folder)
         new_hash = hash_file(new_abs_path)
@@ -302,31 +348,28 @@ def update_movie_from_edit_form(movie, form):
             os.remove(new_abs_path)
             raise DuplicateVideoError(existing)
 
-        old_video_path = movie.video_path
+        new_paths.append(new_abs_path)
+        if movie.video_path:
+            old_paths.append(os.path.join(video_folder, movie.video_path))
         movie.video_path = new_filename
         movie.file_hash = new_hash
-        if old_video_path:
-            old_abs = os.path.join(video_folder, old_video_path)
-            if os.path.exists(old_abs):
-                os.remove(old_abs)
 
-    if form.poster.data and getattr(form.poster.data, "filename", ""):
-        new_filename, _ = save_upload(form.poster.data, poster_folder)
-        old_poster_path = movie.poster_path
-        movie.poster_path = new_filename
-        if old_poster_path:
-            old_abs = os.path.join(poster_folder, old_poster_path)
-            if os.path.exists(old_abs):
-                os.remove(old_abs)
+    for field, folder, attr in (
+        (form.poster, poster_folder, "poster_path"),
+        (form.trailer, video_folder, "trailer_path"),
+    ):
+        if field.data and getattr(field.data, "filename", ""):
+            new_filename, new_abs_path = save_upload(field.data, folder)
+            new_paths.append(new_abs_path)
+            if getattr(movie, attr):
+                old_paths.append(os.path.join(folder, getattr(movie, attr)))
+            setattr(movie, attr, new_filename)
 
-    if form.trailer.data and getattr(form.trailer.data, "filename", ""):
-        new_filename, _ = save_upload(form.trailer.data, video_folder)
-        old_trailer_path = movie.trailer_path
-        movie.trailer_path = new_filename
-        if old_trailer_path:
-            old_abs = os.path.join(video_folder, old_trailer_path)
-            if os.path.exists(old_abs):
-                os.remove(old_abs)
-
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        _remove_files(new_paths)
+        raise
+    _remove_files(old_paths)
     return movie

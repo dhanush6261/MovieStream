@@ -9,6 +9,8 @@ routes.py (auth blueprint)
 - GET/POST /profile/change-password
 """
 
+from urllib.parse import urlparse
+
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
@@ -24,6 +26,18 @@ from blueprints.auth.services import (
     update_profile,
 )
 from forms import ChangePasswordForm, LoginForm, ProfileForm, RegistrationForm
+
+
+def is_safe_next_url(url):
+    """
+    Only allow redirects to a path on this site. "//evil.com" and
+    "/\\evil.com" both start with "/" but browsers treat them as
+    links to another host, so they're rejected explicitly.
+    """
+    if not url or not url.startswith("/") or url.startswith("//") or "\\" in url:
+        return False
+    parsed = urlparse(url)
+    return not parsed.scheme and not parsed.netloc
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
@@ -67,7 +81,7 @@ def login():
         flash(f"Welcome back, {user.username}!", "success")
 
         next_url = request.args.get("next")
-        if next_url and next_url.startswith("/"):  # Only ever redirect within our own site.
+        if is_safe_next_url(next_url):
             return redirect(next_url)
         return redirect(url_for("main.home", sync_favorites=1))
 

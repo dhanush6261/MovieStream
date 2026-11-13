@@ -102,45 +102,30 @@ def update_profile(user, form):
     user.email = new_email
     user.bio = form.bio.data
 
-    # Save the current avatar path before changing it.
+    avatar_folder = current_app.config["AVATAR_FOLDER"]
     old_path = user.avatar_path
+    new_abs = None
 
-    # ---------------------------------------------------------
-    # 1. New avatar uploaded
-    # ---------------------------------------------------------
+    # 1. New avatar uploaded (takes priority over the remove checkbox).
     if form.avatar.data and getattr(form.avatar.data, "filename", ""):
-        filename, _ = save_upload(
-            form.avatar.data,
-            current_app.config["AVATAR_FOLDER"],
-        )
-
-        user.avatar_path = filename
-
-        # Delete the previous avatar file.
-        if old_path:
-            old_abs = os.path.join(
-                current_app.config["AVATAR_FOLDER"],
-                old_path,
-            )
-
-            if os.path.exists(old_abs):
-                os.remove(old_abs)
-
-    # ---------------------------------------------------------
-    # 2. User requested avatar removal
-    # ---------------------------------------------------------
+        user.avatar_path, new_abs = save_upload(form.avatar.data, avatar_folder)
+    # 2. User requested avatar removal.
     elif form.remove_avatar.data and old_path:
-        old_abs = os.path.join(
-            current_app.config["AVATAR_FOLDER"],
-            old_path,
-        )
-
-        if os.path.exists(old_abs):
-            os.remove(old_abs)
-
         user.avatar_path = None
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        if new_abs and os.path.exists(new_abs):
+            os.remove(new_abs)
+        raise
+
+    # Only delete the previous file once the DB no longer points at it.
+    if old_path and user.avatar_path != old_path:
+        old_abs = os.path.join(avatar_folder, old_path)
+        if os.path.exists(old_abs):
+            os.remove(old_abs)
     return user
 
 def get_user_favorite_movies(user, limit=24):
